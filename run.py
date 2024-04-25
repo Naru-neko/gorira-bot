@@ -5,6 +5,23 @@ from discord.commands import Option
 from datetime import datetime, timezone
 
 
+class OtherModal(discord.ui.Modal):
+    def __init__(self, nickname=None, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        self.nickname = nickname
+        self.add_item(discord.ui.InputText(label="離席理由", style=discord.InputTextStyle.short))
+
+    async def callback(self, interaction: discord.Interaction):
+        embed = discord.Embed(title=self.nickname+' さんが離席中', description='理由：'+ self.children[0].value)
+        embed_log = discord.Embed(title=self.nickname+' さんが離席', description='理由：'+ self.children[0].value, timestamp=datetime.now(timezone.utc))
+        for channel in interaction.guild.text_channels:
+            if channel.name in channel_name:
+                await channel.send(embed=embed_log)
+        msg = await interaction.channel.send(embed=embed, view=CompView(timeout=None))
+        current_afk[msg.id] = interaction.user.id
+        await interaction.response.edit_message()
+
+
 class AfkView(discord.ui.View): 
     def __init__(self, timeout=None):
         super().__init__(timeout=timeout)
@@ -19,105 +36,103 @@ class AfkView(discord.ui.View):
             if channel.name in channel_name:
                 await channel.send(embed=embed_log)
                 
-    async def gen_error(self):
+    async def gen_afk_error(self):
         embed = discord.Embed(title=':no_entry:既に離席中です:no_entry:', description='先に別の離席を完了させて下さい')
         return embed
 
     @discord.ui.button(style=discord.ButtonStyle.primary, custom_id='toilet',emoji='🚽')
     async def toilet(self, button: discord.ui.Button, interaction: discord.Interaction):
         reason = 'お手洗い:toilet:'
-        if interaction.user.display_name in afk_user:
-            await interaction.response.send_message(embed=await self.gen_error(), ephemeral=True)
+        if interaction.user.id in current_afk.values():
+            await interaction.response.send_message(embed=await self.gen_afk_error(), ephemeral=True)
             return
         else:
-            afk_user.append(interaction.user.display_name)
             await self.send_afk_log(interaction.user.display_name, reason, interaction.guild.text_channels)
-            await interaction.response.send_message(embed=await self.gen_afking(interaction.user.display_name, reason), 
-                                                    view=CompView(timeout=None))
+            await interaction.response.edit_message()
+            msg = await interaction.channel.send(embed=await self.gen_afking(interaction.user.display_name, reason), view=CompView(timeout=None))
+            current_afk[msg.id] = interaction.user.id
         
     @discord.ui.button(style=discord.ButtonStyle.primary, custom_id='bath',emoji='🛀')
-    async def bath(self, button: discord.ui.Button, interaction: discord.Interaction):
+    async def bath(self, button: discord.ui.Button, interaction: discord.Interaction):    
         reason = 'お風呂:bath:'
-        if interaction.user.display_name in afk_user:
-            await interaction.response.send_message(embed=await self.gen_error(), ephemeral=True)
+        if interaction.user.id in current_afk.values():
+            await interaction.response.send_message(embed=await self.gen_afk_error(), ephemeral=True)
             return
         else:
-            afk_user.append(interaction.user.display_name)
             await self.send_afk_log(interaction.user.display_name, reason, interaction.guild.text_channels)
-            await interaction.response.send_message(embed=await self.gen_afking(interaction.user.display_name, reason), 
-                                                    view=CompView(timeout=None))
+            await interaction.response.edit_message()
+            msg = await interaction.channel.send(embed=await self.gen_afking(interaction.user.display_name, reason), view=CompView(timeout=None))
+            current_afk[msg.id] = interaction.user.id
         
     @discord.ui.button(style=discord.ButtonStyle.primary, custom_id='meal',emoji='🍚')
     async def meal(self, button: discord.ui.Button, interaction: discord.Interaction):
         reason = 'ご飯:rice:'
-        if interaction.user.display_name in afk_user:
-            await interaction.response.send_message(embed=await self.gen_error(), ephemeral=True)
+        if interaction.user.id in current_afk.values():
+            await interaction.response.send_message(embed=await self.gen_afk_error(), ephemeral=True)
             return
         else:
-            afk_user.append(interaction.user.display_name)
             await self.send_afk_log(interaction.user.display_name, reason, interaction.guild.text_channels)
-            await interaction.response.send_message(embed=await self.gen_afking(interaction.user.display_name, reason), 
-                                                    view=CompView(timeout=None))
+            await interaction.response.edit_message()
+            msg = await interaction.channel.send(embed=await self.gen_afking(interaction.user.display_name, reason), view=CompView(timeout=None))
+            current_afk[msg.id] = interaction.user.id
         
     @discord.ui.button(style=discord.ButtonStyle.primary, custom_id='telephone',emoji='☎')
     async def telephone(self, button: discord.ui.Button, interaction: discord.Interaction):
         reason = '電話:telephone:'
-        if interaction.user.display_name in afk_user:
-            await interaction.response.send_message(embed=await self.gen_error(), ephemeral=True)
+        if interaction.user.id in current_afk.values():
+            await interaction.response.send_message(embed=await self.gen_afk_error(), ephemeral=True)
             return
         else:
-            afk_user.append(interaction.user.display_name)
             await self.send_afk_log(interaction.user.display_name, reason, interaction.guild.text_channels)
-            await interaction.response.send_message(embed=await self.gen_afking(interaction.user.display_name, reason), 
-                                                    view=CompView(timeout=None))
+            await interaction.response.edit_message()
+            msg = await interaction.channel.send(embed=await self.gen_afking(interaction.user.display_name, reason), view=CompView(timeout=None))
+            current_afk[msg.id] = interaction.user.id
         
     @discord.ui.button(style=discord.ButtonStyle.primary, custom_id='toothbrush',emoji='🦷')
     async def toothbrush(self, button: discord.ui.Button, interaction: discord.Interaction):
         reason = '歯磨き:toothbrush:'
-        if interaction.user.display_name in afk_user:
-            await interaction.response.send_message(embed=await self.gen_error(), ephemeral=True)
+        if interaction.user.id in current_afk.values():
+            await interaction.response.send_message(embed=await self.gen_afk_error(), ephemeral=True)
             return
         else:
-            afk_user.append(interaction.user.display_name)
             await self.send_afk_log(interaction.user.display_name, reason, interaction.guild.text_channels)
-            await interaction.response.send_message(embed=await self.gen_afking(interaction.user.display_name, reason), 
-                                                    view=CompView(timeout=None))
+            await interaction.response.edit_message()
+            msg = await interaction.channel.send(embed=await self.gen_afking(interaction.user.display_name, reason), view=CompView(timeout=None))
+            current_afk[msg.id] = interaction.user.id
         
     @discord.ui.button(style=discord.ButtonStyle.primary, custom_id='parent',emoji='👨')
     async def parent(self, button: discord.ui.Button, interaction: discord.Interaction):
         reason = '親フラ:man:'
-        if interaction.user.display_name in afk_user:
-            await interaction.response.send_message(embed=await self.gen_error(), ephemeral=True)
+        if interaction.user.id in current_afk.values():
+            await interaction.response.send_message(embed=await self.gen_afk_error(), ephemeral=True)
             return
         else:
-            afk_user.append(interaction.user.display_name)
             await self.send_afk_log(interaction.user.display_name, reason, interaction.guild.text_channels)
-            await interaction.response.send_message(embed=await self.gen_afking(interaction.user.display_name, reason), 
-                                                    view=CompView(timeout=None))
+            await interaction.response.edit_message()
+            msg = await interaction.channel.send(embed=await self.gen_afking(interaction.user.display_name, reason), view=CompView(timeout=None))
+            current_afk[msg.id] = interaction.user.id
         
     @discord.ui.button(style=discord.ButtonStyle.primary, custom_id='thinking',emoji='💭')
     async def thinking(self, button: discord.ui.Button, interaction: discord.Interaction):
         reason = '考え事:thought_balloon:'
-        if interaction.user.display_name in afk_user:
-            await interaction.response.send_message(embed=await self.gen_error(), ephemeral=True)
+        if interaction.user.id in current_afk.values():
+            await interaction.response.send_message(embed=await self.gen_afk_error(), ephemeral=True)
             return
         else:
-            afk_user.append(interaction.user.display_name)
             await self.send_afk_log(interaction.user.display_name, reason, interaction.guild.text_channels)
-            await interaction.response.send_message(embed=await self.gen_afking(interaction.user.display_name, reason), 
-                                                    view=CompView(timeout=None))
+            await interaction.response.edit_message()
+            msg = await interaction.channel.send(embed=await self.gen_afking(interaction.user.display_name, reason), view=CompView(timeout=None))
+            current_afk[msg.id] = interaction.user.id
         
     @discord.ui.button(style=discord.ButtonStyle.primary, custom_id='others',emoji='❓')
     async def others(self, button: discord.ui.Button, interaction: discord.Interaction):
         reason = 'その他:question:'
-        if interaction.user.display_name in afk_user:
-            await interaction.response.send_message(embed=await self.gen_error(), ephemeral=True)
+        if interaction.user.id in current_afk.values():
+            await interaction.response.send_message(embed=await self.gen_afk_error(), ephemeral=True)
             return
         else:
-            afk_user.append(interaction.user.display_name)
-            await self.send_afk_log(interaction.user.display_name, reason, interaction.guild.text_channels)
-            await interaction.response.send_message(embed=await self.gen_afking(interaction.user.display_name, reason), 
-                                                    view=CompView(timeout=None))
+            await interaction.response.send_modal(OtherModal(interaction.user.display_name, title= 'その他理由', timeout=None))
+
 
 class CompView(discord.ui.View): 
     def __init__(self, timeout=None):
@@ -129,11 +144,19 @@ class CompView(discord.ui.View):
             if channel.name in channel_name:
                 await channel.send(embed=embed_log)
                 
+    async def gen_id_error(self):
+        embed = discord.Embed(title=':no_entry:本人確認失敗:no_entry:', description='自分の離席報告以外を完了させることはできません')
+        return embed
+                
     @discord.ui.button(label='完了' ,style=discord.ButtonStyle.primary, custom_id='complete', emoji='✅')
     async def comp(self, button: discord.ui.Button, interaction: discord.Interaction):
-        afk_user.remove(interaction.user.display_name)
+        if interaction.user.id != current_afk[interaction.message.id]:
+            await interaction.response.send_message(embed=await self.gen_id_error(), ephemeral=True)
+            return
+        current_afk.pop(interaction.message.id)
         await self.send_back_log(interaction.user.display_name, interaction.guild.text_channels)
         await interaction.message.delete()
+
 
 
 load_dotenv()
@@ -142,7 +165,7 @@ TOKEN = os.environ.get('BOT_TOKEN')
 
 channel_name = 'bot'
 
-afk_user = []
+current_afk = {}
 
 bot = discord.Bot(
         intents=discord.Intents.all(),
@@ -163,6 +186,7 @@ async def on_message(message: discord.Message):
 
 @bot.command(name="afk", description="離席報告用メッセージを投稿します")
 async def afk(ctx: discord.ApplicationContext):
+    
     embed = discord.Embed(title='離席報告',
                           description='''
 [:toilet: お手洗い]　[:bath: お風呂]
