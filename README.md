@@ -1,0 +1,2 @@
+# gorira-bot
+discord-bot
