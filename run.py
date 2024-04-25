@@ -126,12 +126,11 @@ class AfkView(discord.ui.View):
         
     @discord.ui.button(style=discord.ButtonStyle.primary, custom_id='others',emoji='❓')
     async def others(self, button: discord.ui.Button, interaction: discord.Interaction):
-        reason = 'その他:question:'
         if interaction.user.id in current_afk.values():
             await interaction.response.send_message(embed=await self.gen_afk_error(), ephemeral=True)
             return
         else:
-            await interaction.response.send_modal(OtherModal(interaction.user.display_name, title= 'その他理由', timeout=None))
+            await interaction.response.send_modal(OtherModal(interaction.user.display_name, title= '❓その他理由', timeout=None))
 
 
 class CompView(discord.ui.View): 
