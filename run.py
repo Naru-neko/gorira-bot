@@ -55,37 +55,37 @@ class AfkView(discord.ui.View):
     @discord.ui.button(style=discord.ButtonStyle.primary, custom_id='toilet',emoji='🚽')
     async def toilet(self, button: discord.ui.Button, interaction: discord.Interaction):
         reason = 'お手洗い:toilet:'
-        self.button_component(interaction, reason)
+        await self.button_component(interaction, reason)
         
     @discord.ui.button(style=discord.ButtonStyle.primary, custom_id='bath',emoji='🛀')
     async def bath(self, button: discord.ui.Button, interaction: discord.Interaction):    
         reason = 'お風呂:bath:'
-        self.button_component(interaction, reason)
+        await self.button_component(interaction, reason)
         
     @discord.ui.button(style=discord.ButtonStyle.primary, custom_id='meal',emoji='🍚')
     async def meal(self, button: discord.ui.Button, interaction: discord.Interaction):
         reason = 'ご飯:rice:'
-        self.button_component(interaction, reason)
+        await self.button_component(interaction, reason)
         
     @discord.ui.button(style=discord.ButtonStyle.primary, custom_id='telephone',emoji='☎')
     async def telephone(self, button: discord.ui.Button, interaction: discord.Interaction):
         reason = '電話:telephone:'
-        self.button_component(interaction, reason)
+        await self.button_component(interaction, reason)
         
     @discord.ui.button(style=discord.ButtonStyle.primary, custom_id='toothbrush',emoji='🦷')
     async def toothbrush(self, button: discord.ui.Button, interaction: discord.Interaction):
         reason = '歯磨き:toothbrush:'
-        self.button_component(interaction, reason)
+        await self.button_component(interaction, reason)
         
     @discord.ui.button(style=discord.ButtonStyle.primary, custom_id='parent',emoji='👨')
     async def parent(self, button: discord.ui.Button, interaction: discord.Interaction):
         reason = '親フラ:man:'
-        self.button_component(interaction, reason)
+        await self.button_component(interaction, reason)
         
     @discord.ui.button(style=discord.ButtonStyle.primary, custom_id='thinking',emoji='💭')
     async def thinking(self, button: discord.ui.Button, interaction: discord.Interaction):
         reason = '考え事:thought_balloon:'
-        self.button_component(interaction, reason)
+        await self.button_component(interaction, reason)
         
     @discord.ui.button(style=discord.ButtonStyle.primary, custom_id='others',emoji='❓')
     async def others(self, button: discord.ui.Button, interaction: discord.Interaction):
